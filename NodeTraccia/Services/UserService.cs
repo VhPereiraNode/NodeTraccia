@@ -13,7 +13,7 @@ namespace NodeTraccia.Services
             new User { Id = 4, Nome = "Martina", Email = "martina@example.com" }
         };
 
-        public override UserDto Create(UserDto dto)
+        public override User Create(UserDto dto)
         {
             var user = MapEntity(dto);
             users.Add(user);
@@ -31,23 +31,17 @@ namespace NodeTraccia.Services
             return true;
         }
 
-        public override UserDto Read(int id)
+        public override User Read(int id)
         {
-            UserDto result = new UserDto();
-            var user = users.FirstOrDefault(u => u.Id == id);
-            if (user is not null)
-            {
-                result = MapDto(user);
-            }
-            return result;
+            return users.FirstOrDefault(u => u.Id == id);
         }
 
-        public override List<UserDto> Read(string? ricerca = null)
+        public override List<User> Read(string? ricerca = null)
         {
-            List<UserDto> result = new List<UserDto>();
+            List<User> list = new List<User>();
             if (ricerca != null)
             {
-                List<User> list = new List<User>();
+
                 list = users
                     .Where(u => u.Nome.Contains(ricerca, StringComparison.OrdinalIgnoreCase))
                     .ToList();
@@ -57,25 +51,12 @@ namespace NodeTraccia.Services
                         .Where(u => u.Email.Contains(ricerca, StringComparison.OrdinalIgnoreCase))
                         .ToList();
                 }
-                if (list.Count > 0)
-                {
-                    foreach (var item in list)
-                    {
-                        result.Add(MapDto(item));
-                    }
-                }
+                return list;
             }
-            else
-            {
-                foreach (var item in users)
-                {
-                    result.Add(MapDto(item));
-                }
-            }
-            return result;
+            return users;
         }
 
-        public override UserDto Update(int id, UserDto dto)
+        public override User Update(int id, UserDto dto)
         {
             var user = users.FirstOrDefault(u => u.Id == id);
             if (user is not null)
@@ -89,7 +70,6 @@ namespace NodeTraccia.Services
         {
             UserDto userDto = new UserDto
             {
-                Id = entity.Id,
                 Nome = entity.Nome,
                 Email = entity.Email
             };
@@ -100,7 +80,7 @@ namespace NodeTraccia.Services
         {
             User user = new User
             {
-                Id = users.Count + 1,
+                Id = users.Max(u => u.Id) + 1,
                 Nome = dto.Nome,
                 Email = dto.Email
             };

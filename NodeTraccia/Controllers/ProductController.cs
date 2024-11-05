@@ -30,7 +30,7 @@ namespace NodeTraccia.Controllers
         public IActionResult AddProduct(ProductDto product)
         {
             try
-            {
+            {            
                 var result = _productService.Create(product);
                 return CreatedAtAction(nameof(GetProductById), new { id = result.Id }, result);
             }

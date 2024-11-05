@@ -13,7 +13,7 @@ namespace NodeTraccia.Services
             new Product { Id = 4, Nome = "Monitor", Price = 199.99m }
         };
 
-        public override ProductDto Create(ProductDto dto)
+        public override Product Create(ProductDto dto)
         {
             var product = MapEntity(dto);
             products.Add(product);
@@ -30,42 +30,23 @@ namespace NodeTraccia.Services
             return true;
         }
 
-        public override ProductDto Read(int id)
-        { 
-            ProductDto result = new ProductDto();
-            var product = products.FirstOrDefault(p => p.Id == id);
-            if (product is not null)
-            {
-                result = MapDto(product);
-            }
-            return result ;
+        public override Product Read(int id)
+        {             
+            return products.FirstOrDefault(p => p.Id == id);
         }
 
-        public override List<ProductDto> Read(string? ricerca = null)
-        {
-            List<ProductDto> result = new List<ProductDto>();
-            if (ricerca == null)
+        public override List<Product> Read(string? ricerca = null)
+        {            
+            if (ricerca is not null)
             {
-                foreach (var item in products)
-                {
-                    result.Add(MapDto(item));
-                }
-            }
-            else
-            {
-                var list = products
+                return products
                     .Where(r => r.Nome.Contains(ricerca, StringComparison.OrdinalIgnoreCase))
                     .ToList();
-
-                foreach (var item in list)
-                {
-                    result.Add(MapDto(item));
-                }
-            }
-            return result;
+            }            
+            return products;
         }
 
-        public override ProductDto Update(int id, ProductDto dto)
+        public override Product Update(int id, ProductDto dto)
         {
             var product = products.FirstOrDefault(p => p.Id == id);
             if (product is not null)
@@ -79,8 +60,7 @@ namespace NodeTraccia.Services
         protected override ProductDto MapDto(Product entity)
         {
             ProductDto dto = new ProductDto
-            {
-                Id = entity.Id,
+            {               
                 Nome = entity.Nome,
                 Price = entity.Price,
             };
@@ -91,7 +71,7 @@ namespace NodeTraccia.Services
         {
             Product product = new Product
             {
-                Id = products.Count + 1,
+                Id = products.Max(p=>p.Id) + 1,
                 Nome = dto.Nome,
                 Price = dto.Price
             };
