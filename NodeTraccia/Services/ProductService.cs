@@ -6,55 +6,42 @@ namespace NodeTraccia.Services
 {
     public class ProductService : CrudServiceBase<Product, ProductDto>
     {
-        public static List<Product> products = new List<Product> { 
+        public static List<Product> products = new List<Product> {
             new Product { Id = 1, Nome = "Laptop", Price = 999.99m },
             new Product { Id = 2, Nome = "Smartphone", Price = 499.99m },
             new Product { Id = 3, Nome = "Tablet", Price = 299.99m },
             new Product { Id = 4, Nome = "Monitor", Price = 199.99m }
         };
 
-        public  Product Create(ProductDto dto);
-       
-
-        public override bool Delete(int id)
+        protected override Product AddEntity(Product entity)
         {
-            products.RemoveAll(p => p.Id == id);
-            if (products.Any(p => p.Id == id))
-            {
-                return false;
-            }
-            return true;
+            entity.Id = products.Max(u => u.Id) + 1;
+            products.Add(entity);
+            return entity;
         }
 
-        public  Product Read(int id);
-     
-
-        public override List<Product> Read(string? ricerca = null)
-        {            
-            if (ricerca is not null)
-            {
-                return products
-                    .Where(r => r.Nome.Contains(ricerca, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
-            }            
-            return products;
+        protected override List<Product> GetAll()
+        {
+            return products.ToList();
         }
 
-        public override Product Update(int id, ProductDto dto)
+        protected override List<Product> GetByString(string ricerca)
+
         {
-            var product = products.FirstOrDefault(p => p.Id == id);
-            if (product is not null)
-            {
-                product.Nome = dto.Nome;
-                product.Price = dto.Price;
-            }
-            return Read(id);
+            return products
+                     .Where(r => r.Nome.Contains(ricerca, StringComparison.OrdinalIgnoreCase))
+                     .ToList();
+        }
+
+        protected override Product GetEntityById(int id)
+        {
+            return products.FirstOrDefault(x => x.Id.Equals(id));
         }
 
         protected override ProductDto MapDto(Product entity)
         {
             ProductDto dto = new ProductDto
-            {               
+            {
                 Nome = entity.Nome,
                 Price = entity.Price,
             };
@@ -65,10 +52,22 @@ namespace NodeTraccia.Services
         {
             Product product = new Product
             {
-                Id = products.Max(p=>p.Id) + 1,
                 Nome = dto.Nome,
                 Price = dto.Price
             };
+            return product;
+        }
+
+        protected override void Remove(int id)
+        {
+            products.RemoveAll(p => p.Id == id);
+        }
+
+        protected override Product UpdateEntity(Product product, ProductDto dto)
+        {
+            product.Nome = dto.Nome;
+            product.Price = dto.Price;
+
             return product;
         }
     }

@@ -1,4 +1,5 @@
-﻿using NodeTraccia.Dtos;
+﻿using System.Collections.Generic;
+using NodeTraccia.Dtos;
 using NodeTraccia.Models;
 using NodeTraccia.Repositories;
 
@@ -13,53 +14,39 @@ namespace NodeTraccia.Services
             new User { Id = 4, Nome = "Martina", Email = "martina@example.com" }
         };
 
-        public extern User Create(UserDto dto);
-        
 
-        public override bool Delete(int id)
+        protected override User AddEntity(User entity)
         {
-            users.RemoveAll(u => u.Id == id);
-            var result = users.FirstOrDefault(u => u.Id == id);
-            if (result is not null)
-            {
-                return false;
-            }
-            return true;
+            entity.Id = users.Max(u => u.Id) + 1;
+            users.Add(entity);
+            return entity;
         }
 
-        public extern User Read(int id);
-        
+        protected override List<User> GetAll()
+        {
+            return users.ToList();
+        }
 
-        public override List<User> Read(string? ricerca = null)
+        protected override List<User> GetByString(string ricerca)
         {
             List<User> list = new List<User>();
-            if (ricerca != null)
+            list = users
+                   .Where(u => u.Nome.Contains(ricerca, StringComparison.OrdinalIgnoreCase))
+                   .ToList();
+            if (list.Count == 0)
             {
-
                 list = users
-                    .Where(u => u.Nome.Contains(ricerca, StringComparison.OrdinalIgnoreCase))
+                    .Where(u => u.Email.Contains(ricerca, StringComparison.OrdinalIgnoreCase))
                     .ToList();
-                if (list.Count == 0)
-                {
-                    list = users
-                        .Where(u => u.Email.Contains(ricerca, StringComparison.OrdinalIgnoreCase))
-                        .ToList();
-                }
-                return list;
             }
-            return users;
+            return list;
         }
 
-        public override User Update(int id, UserDto dto)
+        protected override User? GetEntityById(int id)
         {
-            var user = users.FirstOrDefault(u => u.Id == id);
-            if (user is not null)
-            {
-                user.Nome = dto.Nome;
-                user.Email = dto.Email;
-            }
-            return Read(id);
+            return users.FirstOrDefault(u => u.Id == id);
         }
+
         protected override UserDto MapDto(User entity)
         {
             UserDto userDto = new UserDto
@@ -74,10 +61,22 @@ namespace NodeTraccia.Services
         {
             User user = new User
             {
-                Id = users.Max(u => u.Id) + 1,
                 Nome = dto.Nome,
                 Email = dto.Email
             };
+            return user;
+        }
+
+        protected override void Remove(int id)
+        {
+            users.RemoveAll(u => u.Id == id);
+        }
+
+        protected override User UpdateEntity(User user, UserDto dto)
+        {
+            user.Nome = dto.Nome;
+            user.Email = dto.Email;
+
             return user;
         }
     }

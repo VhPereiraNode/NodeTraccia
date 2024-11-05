@@ -52,7 +52,7 @@ namespace NodeTraccia.Controllers
             try
             {
                 var result = _userService.Read(id);
-                if (result.Id==0)
+                if (result is null)
                 {
                     return NotFound();
                 }
@@ -103,7 +103,7 @@ namespace NodeTraccia.Controllers
         {
             try
             {                
-                if (_userService.Read(id).Id == 0)
+                if (_userService.Read(id) is null)
                 {
                     return NotFound();
                 }
@@ -130,7 +130,7 @@ namespace NodeTraccia.Controllers
         {
             try
             {                
-                if (_userService.Read(id).Id == 0)
+                if (_userService.Read(id) is null)
                 {
                     return NotFound();
                 }                

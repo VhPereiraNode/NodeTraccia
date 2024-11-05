@@ -53,7 +53,7 @@ namespace NodeTraccia.Controllers
             try
             {
                 var result = _productService.Read(id);
-                if (result.Id == 0)
+                if (result is not null)
                 {
                     return NotFound();
                 }
@@ -105,7 +105,7 @@ namespace NodeTraccia.Controllers
         {
             try
             {
-                if (_productService.Read(id).Id == 0)
+                if (_productService.Read(id) is not null)
                 {
                     return NotFound();
                 }
@@ -129,7 +129,7 @@ namespace NodeTraccia.Controllers
 
             try
             {
-                if (_productService.Read(id).Id == 0)
+                if (_productService.Read(id) is not null)
                 {
                     return NotFound();
                 }
