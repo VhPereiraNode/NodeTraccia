@@ -13,12 +13,8 @@ namespace NodeTraccia.Services
             new User { Id = 4, Nome = "Martina", Email = "martina@example.com" }
         };
 
-        public override User Create(UserDto dto)
-        {
-            var user = MapEntity(dto);
-            users.Add(user);
-            return Read(user.Id);
-        }
+        public extern User Create(UserDto dto);
+        
 
         public override bool Delete(int id)
         {
@@ -31,10 +27,8 @@ namespace NodeTraccia.Services
             return true;
         }
 
-        public override User Read(int id)
-        {
-            return users.FirstOrDefault(u => u.Id == id);
-        }
+        public extern User Read(int id);
+        
 
         public override List<User> Read(string? ricerca = null)
         {

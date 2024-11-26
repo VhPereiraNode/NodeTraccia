@@ -1,9 +1,20 @@
-﻿namespace NodeTraccia.Repositories
+﻿using NodeTraccia.Models;
+
+namespace NodeTraccia.Repositories
 {
-    public abstract class CrudServiceBase<TEntity, TDto>
+    public abstract class CrudServiceBase<TEntity, TDto> where TEntity : BaseEntity
     {
-        public abstract TEntity Create(TDto dto);
-        public abstract TEntity Read(int id);
+        protected List<TEntity> _entities;
+        public  TEntity Create(TDto dto)
+        {
+            var t = MapEntity(dto);
+             _entities.Add(t);
+            return Read(t.Id);
+        }
+        public TEntity Read(int id) 
+        {  
+            return _entities.FirstOrDefault(x=>x.Id.Equals(id)); 
+        }
         public abstract List<TEntity> Read(string? ricerca =null);
         public abstract TEntity Update(int id, TDto dto);
         public abstract bool Delete(int id);

@@ -13,12 +13,8 @@ namespace NodeTraccia.Services
             new Product { Id = 4, Nome = "Monitor", Price = 199.99m }
         };
 
-        public override Product Create(ProductDto dto)
-        {
-            var product = MapEntity(dto);
-            products.Add(product);
-            return Read(product.Id);
-        }
+        public  Product Create(ProductDto dto);
+       
 
         public override bool Delete(int id)
         {
@@ -30,10 +26,8 @@ namespace NodeTraccia.Services
             return true;
         }
 
-        public override Product Read(int id)
-        {             
-            return products.FirstOrDefault(p => p.Id == id);
-        }
+        public  Product Read(int id);
+     
 
         public override List<Product> Read(string? ricerca = null)
         {            
